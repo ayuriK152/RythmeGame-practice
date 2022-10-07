@@ -16,14 +16,14 @@ public class Datas
     public class BarData
     {
         public float _scrollSpeed;
-        public NoteData[] _noteDatas;
+        public List<NoteData> _noteDatas;
     }
 
     [Serializable]
     public class MusicPattern
     {
         public AudioSource _music;
-        public Datas.BarData[] _barDatas;
+        public List<Datas.BarData> _barDatas;
         public int _bpm;
         public float _songOffset = 0.0f;
     }

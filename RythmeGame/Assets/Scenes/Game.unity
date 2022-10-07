@@ -274,7 +274,7 @@ GameObject:
   - component: {fileID: 551707384}
   - component: {fileID: 551707386}
   m_Layer: 0
-  m_Name: MusicPattern
+  m_Name: PatternPlayController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -294,15 +294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _musicPattern:
     _music: {fileID: 551707386}
-    _barDatas:
-    - _scrollSpeed: 15
-      _noteDatas: []
-    - _scrollSpeed: 15
-      _noteDatas: []
-    - _scrollSpeed: 15
-      _noteDatas: []
-    - _scrollSpeed: 15
-      _noteDatas: []
+    _barDatas: []
     _bpm: 210
     _songOffset: -0.63
   _playGame: 0

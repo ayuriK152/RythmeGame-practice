@@ -129,5 +129,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27ba58de09434b349a1d609475536c1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scrollSpeed: 15
+  _scrollSpeed: 10
   _noteDatas: []

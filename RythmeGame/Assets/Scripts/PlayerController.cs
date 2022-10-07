@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            GameObject.Find("MusicPattern").GetComponent<PatternPlayController>()._playGame = true;
+            GameObject.Find("PatternPlayController").GetComponent<PatternPlayController>()._playGame = true;
         }
     }
 }

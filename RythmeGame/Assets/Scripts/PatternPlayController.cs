@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Datas;
 
 public class PatternPlayController : MonoBehaviour
 {
@@ -25,7 +26,7 @@ public class PatternPlayController : MonoBehaviour
     private void InstantiateBars()
     {
         float height = 0.0f;
-        for (int i = 0; i < _musicPattern._barDatas.Length; i++)
+        for (int i = 0; i < _musicPattern._barDatas.Count; i++)
         {
             GameObject temp = Instantiate(_bar);
             temp.transform.parent = transform;
