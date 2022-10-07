@@ -11,7 +11,7 @@ public class Bar : MonoBehaviour
     public float _scrollSpeed = 5.0f;
     public Datas.NoteData[] _noteDatas;
 
-    public void Awake()
+    private void Awake()
     {
         _note = Resources.Load<GameObject>("Prefabs/Note");
         CreateNotes();

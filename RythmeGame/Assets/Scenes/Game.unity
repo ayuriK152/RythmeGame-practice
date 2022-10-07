@@ -292,9 +292,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173dfc60fdf4d754a84fa0fe04653785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _barDatas: []
-  _bpm: 210
-  _songOffset: -0.63
+  _musicPattern:
+    _music: {fileID: 551707386}
+    _barDatas:
+    - _scrollSpeed: 15
+      _noteDatas: []
+    - _scrollSpeed: 15
+      _noteDatas: []
+    - _scrollSpeed: 15
+      _noteDatas: []
+    - _scrollSpeed: 15
+      _noteDatas: []
+    _bpm: 210
+    _songOffset: -0.63
   _playGame: 0
   _barIndex: 0
 --- !u!4 &551707385

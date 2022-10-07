@@ -15,7 +15,16 @@ public class Datas
     [Serializable]
     public class BarData
     {
-        public float _scrollSpeed = 5.0f;
+        public float _scrollSpeed;
         public NoteData[] _noteDatas;
+    }
+
+    [Serializable]
+    public class MusicPattern
+    {
+        public AudioSource _music;
+        public Datas.BarData[] _barDatas;
+        public int _bpm;
+        public float _songOffset = 0.0f;
     }
 }
