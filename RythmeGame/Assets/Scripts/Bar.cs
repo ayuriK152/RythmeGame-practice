@@ -15,9 +15,7 @@ public class Bar : MonoBehaviour
     private void Awake()
     {
         _note = Resources.Load<GameObject>("Prefabs/Note");
-
-        if(SceneManager.GetActiveScene().name == "Game")
-            CreateNotes();
+        CreateNotes();
     }
 
     void CreateNotes()

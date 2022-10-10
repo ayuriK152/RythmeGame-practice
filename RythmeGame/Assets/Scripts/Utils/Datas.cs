@@ -15,6 +15,7 @@ public class Datas
     [Serializable]
     public class BarData
     {
+        public int _barIndex;
         public float _scrollSpeed;
         public List<NoteData> _noteDatas;
     }

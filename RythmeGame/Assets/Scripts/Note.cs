@@ -10,7 +10,7 @@ public class Note : MonoBehaviour
 
     private void Start()
     {
-        float yPosition = (_timing / 256.0f) * transform.parent.GetComponent<Bar>()._scrollSpeed;
+        float yPosition = (_timing / 16.0f) * transform.parent.GetComponent<Bar>()._scrollSpeed;
         switch (_laneNumber)
         {
             case Define.LaneNumber.First:

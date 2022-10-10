@@ -294,7 +294,85 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _musicPattern:
     _music: {fileID: 551707386}
-    _barDatas: []
+    _barDatas:
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas:
+      - _timing: 0
+        _laneNumber: 1
+      - _timing: 4
+        _laneNumber: 2
+      - _timing: 8
+        _laneNumber: 3
+      - _timing: 12
+        _laneNumber: 4
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas:
+      - _timing: 0
+        _laneNumber: 1
+      - _timing: 4
+        _laneNumber: 2
+      - _timing: 8
+        _laneNumber: 3
+      - _timing: 12
+        _laneNumber: 4
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas:
+      - _timing: 0
+        _laneNumber: 1
+      - _timing: 4
+        _laneNumber: 2
+      - _timing: 8
+        _laneNumber: 3
+      - _timing: 12
+        _laneNumber: 4
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 3
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 3
+      _noteDatas: []
+    - _barIndex: 0
+      _scrollSpeed: 15
+      _noteDatas: []
     _bpm: 210
     _songOffset: -0.63
   _playGame: 0
