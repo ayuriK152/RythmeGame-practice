@@ -16,6 +16,6 @@ public class UI_BeatSelectDropdown : MonoBehaviour
 
     public void SelectBeat()
     {
-        MusicPatternEditor.ChangeEditorBeat(_dropdown.value);
+        MusicPatternEditorController.ChangeEditorBeat(_dropdown.value);
     }
 }

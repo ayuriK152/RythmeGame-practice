@@ -16,7 +16,7 @@ public class EditorBar : MonoBehaviour
     private void Awake()
     {
         _note = Resources.Load<GameObject>("Prefabs/EditorNote");
-        MusicPatternEditor.EditorBeatUpdateEvent += UpdateBeat;
+        MusicPatternEditorController.EditorBeatUpdateEvent += UpdateBeat;
         UpdateBeat();
     }
 

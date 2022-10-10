@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using static Datas;
 
-public class MusicPatternEditor : MonoBehaviour
+public class MusicPatternEditorController : MonoBehaviour
 {
     [SerializeField]
     private MusicPattern _musicPattern;
@@ -24,6 +24,11 @@ public class MusicPatternEditor : MonoBehaviour
     {
         _bar = Resources.Load<GameObject>("Prefabs/EditorBar");
         _note = Resources.Load<GameObject>("Prefabs/Note");
+    }
+
+    private void Update()
+    {
+        PatternScrolling();
     }
 
     public void AddBar()
@@ -74,13 +79,27 @@ public class MusicPatternEditor : MonoBehaviour
 
     }
 
-    public void savePatternData()
+    public void SavePatternData()
     {
 
     }
 
-    public void loadPatternData()
+    public void LoadPatternData()
     {
 
+    }
+
+    private void PatternScrolling()
+    {
+        Vector2 wheelInput = -Input.mouseScrollDelta;
+        if (wheelInput.y < 0 && _barIndex > 0 && transform.position.y > _barIndex * -4.0f)      //휠을 올릴경우
+            transform.Translate(wheelInput);
+        if (wheelInput.y > 0 && transform.position.y < -4.0f)       // 휠을 내릴경우
+            transform.Translate(wheelInput);
+
+        if (transform.position.y > -4.0f)
+            transform.position = new Vector2(0.0f, -4.0f);
+        if (transform.position.y < _barIndex * -4.0f)
+            transform.position = new Vector2(0.0f, -_barIndex * -4.0f);
     }
 }
