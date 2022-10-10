@@ -6,14 +6,48 @@ public class EditorNote : MonoBehaviour
 {
     public float _timing;
     public Define.LaneNumber _laneNumber;
+    public bool _isSelected = false;
+    GameObject _lineGo;
+    GameObject _selectedNotesParent;
 
     private void Awake()
     {
+        _lineGo = transform.parent.gameObject;
+        _selectedNotesParent = transform.parent.parent.parent.Find("SelectedNotes").gameObject;
         InitializeLaneNumber();
         InitializeTiming();
     }
 
-    
+    private void OnMouseEnter()
+    {
+        if (_isSelected)
+            return;
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 0.25f);
+    }
+
+    private void OnMouseExit()
+    {
+        if (_isSelected)
+            return;
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 0.0f);
+    }
+
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            _isSelected = true;
+            transform.parent = _selectedNotesParent.transform;
+            gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 1.0f);
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            _isSelected = false;
+            transform.parent = _lineGo.transform;
+            gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 0.0f);
+        }
+    }
 
     private void InitializeLaneNumber()
     {
@@ -31,68 +65,66 @@ public class EditorNote : MonoBehaviour
 
     private void InitializeTiming()
     {
-        GameObject lineGo = transform.parent.gameObject;
-        GameObject timeGo;
+        GameObject timeGo = _lineGo.transform.parent.gameObject;
 
-        if (lineGo.name == "BaseLine")
+        if (timeGo.name == "1over1")
         {
             _timing = 0;
         }
 
         else
         {
-            timeGo = lineGo.transform.parent.gameObject;
-            if (timeGo.name == "2by1")
+            if (timeGo.name == "1over2")
                 _timing = 8;
 
-            else if (timeGo.name == "4by1")
+            else if (timeGo.name == "1over4")
             {
-                if (lineGo.name == "Line1")
+                if (_lineGo.name == "Line1")
                     _timing = 4;
 
-                else if (lineGo.name == "Line2")
+                else if (_lineGo.name == "Line2")
                     _timing = 12;
             }
 
-            else if (timeGo.name == "8by1")
+            else if (timeGo.name == "1over8")
             {
-                if (lineGo.name == "Line1")
+                if (_lineGo.name == "Line1")
                     _timing = 2;
 
-                else if (lineGo.name == "Line2")
+                else if (_lineGo.name == "Line2")
                     _timing = 6;
 
-                else if (lineGo.name == "Line3")
+                else if (_lineGo.name == "Line3")
                     _timing = 10;
 
-                else if (lineGo.name == "Line4")
+                else if (_lineGo.name == "Line4")
                     _timing = 14;
             }
 
-            else if (timeGo.name == "16by1")
+            else if (timeGo.name == "1over16")
             {
-                if (lineGo.name == "Line1")
+                if (_lineGo.name == "Line1")
                     _timing = 1;
 
-                else if (lineGo.name == "Line2")
+                else if (_lineGo.name == "Line2")
                     _timing = 3;
 
-                else if (lineGo.name == "Line3")
+                else if (_lineGo.name == "Line3")
                     _timing = 5;
 
-                else if (lineGo.name == "Line4")
+                else if (_lineGo.name == "Line4")
                     _timing = 7;
 
-                else if (lineGo.name == "Line5")
+                else if (_lineGo.name == "Line5")
                     _timing = 9;
 
-                else if (lineGo.name == "Line6")
+                else if (_lineGo.name == "Line6")
                     _timing = 11;
 
-                else if (lineGo.name == "Line7")
+                else if (_lineGo.name == "Line7")
                     _timing = 13;
 
-                else if (lineGo.name == "Line8")
+                else if (_lineGo.name == "Line8")
                     _timing = 15;
             }
         }

@@ -12,4 +12,13 @@ public class Define
         Third,
         Fourth,
     }
+
+    public enum Beat
+    {
+        OneOverOne,
+        OneOverTwo,
+        OneOverFour,
+        OneOverEight,
+        OneOverSixty,
+    }
 }
