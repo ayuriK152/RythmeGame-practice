@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static Datas;
@@ -15,8 +16,8 @@ public class MusicPatternEditorController : MonoBehaviour
     private float height = 0.0f;
     public int _barIndex = 0;
 
-    private List<GameObject> _barTempDatas;
-    private List<GameObject> _tempBars;
+    public List<Datas.BarData> _barTempDatas;
+    public List<GameObject> _tempBars;
 
     static public Action EditorBeatUpdateEvent = null;
 
@@ -29,22 +30,6 @@ public class MusicPatternEditorController : MonoBehaviour
     private void Update()
     {
         PatternScrolling();
-    }
-
-    public void AddBar()
-    {
-        GameObject temp = Instantiate(_bar);
-        temp.transform.parent = transform;
-        temp.transform.localPosition = new Vector2(0, height);
-
-        BarData tempData = new BarData();
-        tempData._scrollSpeed = temp.GetComponent<EditorBar>()._scrollSpeed;
-        tempData._noteDatas = null;
-        _musicPattern._barDatas.Add(tempData);
-        temp.SetActive(true);
-
-        height += 4;
-        _barIndex++;
     }
 
     static public void ChangeEditorBeat(int index)
@@ -64,9 +49,36 @@ public class MusicPatternEditorController : MonoBehaviour
             EditorBeatUpdateEvent.Invoke();
     }
 
+    public void AddBar()
+    {
+        GameObject temp = Instantiate(_bar);
+        temp.transform.parent = transform;
+        temp.transform.localPosition = new Vector2(0, height);
+        temp.GetComponent<EditorBar>()._barIndex = _barIndex;
+        _tempBars.Add(temp);
+
+        BarData tempData = new BarData();
+        tempData._scrollSpeed = temp.GetComponent<EditorBar>()._scrollSpeed;
+        tempData._noteDatas = null;
+        _barTempDatas.Add(tempData);
+        temp.SetActive(true);
+
+        height += 4;
+        _barIndex++;
+    }
+
     public void DeleteBar()
     {
+        if (_barIndex == 0)
+            return;
 
+        GameObject delBar = _tempBars[_barIndex - 1];
+        Destroy(delBar);
+        _tempBars.Remove(delBar);
+        _barTempDatas.Remove(_barTempDatas[_barIndex - 1]);
+
+        height -= 4;
+        _barIndex--;
     }
 
     public void AddNote()

@@ -9,6 +9,7 @@ public class EditorBar : MonoBehaviour
 
     public float _scrollSpeed;
     public List<Datas.NoteData> _noteDatas;
+    public int _barIndex;
 
     [SerializeField]
     static public Define.Beat _beat = Define.Beat.OneOverFour;

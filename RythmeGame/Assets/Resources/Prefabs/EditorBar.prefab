@@ -342,7 +342,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: d7915b95269ec624899d10ca788cd4e3, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1455,6 +1455,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scrollSpeed: 0
   _noteDatas: []
+  _barIndex: 0
 --- !u!1 &8467640069324060014
 GameObject:
   m_ObjectHideFlags: 0
