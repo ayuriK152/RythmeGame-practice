@@ -1453,7 +1453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a019cca934855144b8c344bf0b2a4f65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scrollSpeed: 0
+  _scrollSpeed: 1
   _noteDatas: []
   _barIndex: 0
 --- !u!1 &8467640069324060014

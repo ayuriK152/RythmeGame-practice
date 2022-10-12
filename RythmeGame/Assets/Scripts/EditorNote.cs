@@ -8,13 +8,18 @@ public class EditorNote : MonoBehaviour
     public float _timing;
     public Define.LaneNumber _laneNumber;
     public bool _isSelected = false;
+
     GameObject _lineGo;
     GameObject _selectedNotesParent;
+    GameObject _editorBar;
+    MusicPatternEditorController _editorController;
 
     private void Awake()
     {
         _lineGo = transform.parent.gameObject;
-        _selectedNotesParent = transform.parent.parent.parent.Find("SelectedNotes").gameObject;
+        _editorBar = transform.parent.parent.parent.gameObject;
+        _selectedNotesParent = _editorBar.transform.Find("SelectedNotes").gameObject;
+        _editorController = GameObject.Find("PatternEditor").GetComponent<MusicPatternEditorController>();
         InitializeLaneNumber();
         InitializeTiming();
     }
@@ -40,6 +45,7 @@ public class EditorNote : MonoBehaviour
             _isSelected = true;
             transform.parent = _selectedNotesParent.transform;
             gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 1.0f);
+            _editorController._notes.Add(gameObject);
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -47,6 +53,7 @@ public class EditorNote : MonoBehaviour
             _isSelected = false;
             transform.parent = _lineGo.transform;
             gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 0.0f);
+            _editorController._notes.Remove(gameObject);
         }
     }
 

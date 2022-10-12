@@ -10,6 +10,17 @@ public class Datas
     {
         public float _timing;
         public Define.LaneNumber _laneNumber;
+
+        public NoteData()
+        {
+
+        }
+
+        public NoteData(float timing, Define.LaneNumber laneNumber)
+        {
+            _timing = timing;
+            _laneNumber = laneNumber;
+        }
     }
 
     [Serializable]

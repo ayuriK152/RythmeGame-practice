@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class DataManager
 {
-    public void saveAsJson<T>(T obj, string path)
+    public void saveAsJson<T>(T obj, string fileName)
     {
-        File.WriteAllText(Application.dataPath + "/Resources/Datas/" + path, JsonUtility.ToJson(obj));
+        File.WriteAllText(Application.dataPath + "/Resources/Datas/" + fileName + ".json", JsonUtility.ToJson(obj));
     }
 }
