@@ -23,6 +23,9 @@ public class MusicPatternEditorController : MonoBehaviour
     public List<Datas.BarData> _barDatas;
     public List<GameObject> _bars;
 
+    private TMP_InputField _bpmInputField;
+    private TMP_InputField _offsetInputField;
+
     static public Action EditorBeatUpdateEvent = null;
 
     private void Start()
@@ -30,6 +33,10 @@ public class MusicPatternEditorController : MonoBehaviour
         Init();
         _bar = Resources.Load<GameObject>("Prefabs/EditorBar");
         _note = Resources.Load<GameObject>("Prefabs/Note");
+        _bpmInputField = GameObject.Find("BPMInputField").GetComponent<TMP_InputField>();
+        _bpmInputField.text = Convert.ToString(_musicPattern._bpm);
+        _offsetInputField = GameObject.Find("OffsetInputField").GetComponent<TMP_InputField>();
+        _offsetInputField.text = Convert.ToString(_musicPattern._songOffset);
     }
 
     private void Init()
@@ -156,6 +163,16 @@ public class MusicPatternEditorController : MonoBehaviour
         {
             Debug.LogError("Pattern loading is failed! Check file name or location. The file may be corrupted also.");
         }
+    }
+
+    public void UpdatePatternBPM()
+    {
+        _musicPattern._bpm = Convert.ToInt32(_bpmInputField.text);
+    }
+
+    public void UpdatePatternOffset()
+    {
+        _musicPattern._songOffset = Convert.ToInt32(_offsetInputField.text);
     }
 
     private void PatternScrolling()
