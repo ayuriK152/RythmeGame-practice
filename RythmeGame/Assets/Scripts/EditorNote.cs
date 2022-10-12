@@ -11,7 +11,7 @@ public class EditorNote : MonoBehaviour
 
     GameObject _lineGo;
     GameObject _selectedNotesParent;
-    GameObject _editorBar;
+    public GameObject _editorBar;
     MusicPatternEditorController _editorController;
 
     private void Awake()

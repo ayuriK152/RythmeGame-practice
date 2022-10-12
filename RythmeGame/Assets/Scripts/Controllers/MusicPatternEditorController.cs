@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 using static Datas;
 
@@ -23,6 +25,13 @@ public class MusicPatternEditorController : MonoBehaviour
 
     static public Action EditorBeatUpdateEvent = null;
 
+    private void Start()
+    {
+        Init();
+        _bar = Resources.Load<GameObject>("Prefabs/EditorBar");
+        _note = Resources.Load<GameObject>("Prefabs/Note");
+    }
+
     private void Init()
     {
         height = 0.0f;
@@ -32,13 +41,6 @@ public class MusicPatternEditorController : MonoBehaviour
         _notes = new List<GameObject>();
         _barDatas = new List<BarData>();
         _bars = new List<GameObject>();
-    }
-
-    private void Start()
-    {
-        Init();
-        _bar = Resources.Load<GameObject>("Prefabs/EditorBar");
-        _note = Resources.Load<GameObject>("Prefabs/Note");
     }
 
     private void Update()
@@ -87,6 +89,17 @@ public class MusicPatternEditorController : MonoBehaviour
             return;
 
         GameObject delBar = _bars[_barIndex - 1];
+
+        List<GameObject> notesToBeDeleted = new List<GameObject>();
+
+        foreach (GameObject note in _notes)
+            if (note.GetComponent<EditorNote>()._editorBar == delBar)
+                notesToBeDeleted.Add(note);
+
+        foreach (GameObject childNote in notesToBeDeleted)
+            if (childNote.GetComponent<EditorNote>()._isSelected)
+                childNote.GetComponent<EditorNote>().DeleteEditorNote();
+
         Destroy(delBar);
         _bars.Remove(delBar);
         _barDatas.Remove(_barDatas[_barIndex - 1]);
@@ -141,7 +154,7 @@ public class MusicPatternEditorController : MonoBehaviour
 
         else
         {
-            Debug.LogWarning("Pattern loading is failed! Check file name or location. The file may be corrupted also.");
+            Debug.LogError("Pattern loading is failed! Check file name or location. The file may be corrupted also.");
         }
     }
 
