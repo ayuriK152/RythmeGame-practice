@@ -35,7 +35,7 @@ public class Datas
     public class MusicPattern
     {
         public AudioSource _music;
-        public List<Datas.BarData> _barDatas;
+        public List<BarData> _barDatas;
         public int _bpm;
         public float _songOffset = 0.0f;
     }

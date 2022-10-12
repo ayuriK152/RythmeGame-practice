@@ -23,8 +23,20 @@ public class MusicPatternEditorController : MonoBehaviour
 
     static public Action EditorBeatUpdateEvent = null;
 
+    private void Init()
+    {
+        height = 0.0f;
+        _barIndex = 0;
+
+        _noteDatas = new List<NoteData>();
+        _notes = new List<GameObject>();
+        _barDatas = new List<BarData>();
+        _bars = new List<GameObject>();
+    }
+
     private void Start()
     {
+        Init();
         _bar = Resources.Load<GameObject>("Prefabs/EditorBar");
         _note = Resources.Load<GameObject>("Prefabs/Note");
     }
@@ -87,6 +99,7 @@ public class MusicPatternEditorController : MonoBehaviour
     {
         for (int i = 0; i < _barDatas.Count; i++)
         {
+            _barDatas[i]._noteDatas = new List<NoteData>();
             for (int j = 0; j < _notes.Count; j++)
             {
                 EditorNote currentNote = _notes[j].GetComponent<EditorNote>();
@@ -95,12 +108,41 @@ public class MusicPatternEditorController : MonoBehaviour
             }
         }
         _musicPattern._barDatas = _barDatas;
-        Managers.Data.saveAsJson(_musicPattern, "TestPattern");
+        Managers.Data.SaveAsJson(_musicPattern, "TestPattern");
     }
 
     public void LoadPatternData()
     {
+        _musicPattern = Managers.Data.LoadJson<Datas.MusicPattern>("TestPattern");
 
+        if (_musicPattern != null)
+        {
+            Init();
+            for (int i = 0; i < _musicPattern._barDatas.Count; i++)
+            {
+                AddBar();
+                GameObject currentLoadBar = _bars[_barIndex - 1];
+                EditorNote[] childNotes = currentLoadBar.GetComponentsInChildren<EditorNote>();
+
+                for (int j = 0; j < _musicPattern._barDatas[i]._noteDatas.Count; j++)
+                {
+                    foreach (EditorNote childNote in childNotes)
+                    {
+                        if (childNote.GetComponent<EditorNote>()._timing == _musicPattern._barDatas[i]._noteDatas[j]._timing
+                            && childNote.GetComponent<EditorNote>()._laneNumber == _musicPattern._barDatas[i]._noteDatas[j]._laneNumber)
+                        {
+                            childNote.GetComponent<EditorNote>().CreateEditorNote();
+                        }
+                    }
+                }
+                _barDatas[i]._noteDatas = _musicPattern._barDatas[i]._noteDatas;
+            }
+        }
+
+        else
+        {
+            Debug.LogWarning("Pattern loading is failed! Check file name or location. The file may be corrupted also.");
+        }
     }
 
     private void PatternScrolling()

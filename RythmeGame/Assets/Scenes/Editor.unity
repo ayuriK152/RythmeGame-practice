@@ -3620,7 +3620,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1537978427}
-        m_TargetAssemblyTypeName: MusicPatternEditor, Assembly-CSharp
+        m_TargetAssemblyTypeName: MusicPatternEditorController, Assembly-CSharp
         m_MethodName: AddBar
         m_Mode: 1
         m_Arguments:

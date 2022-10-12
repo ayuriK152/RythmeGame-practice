@@ -41,20 +41,26 @@ public class EditorNote : MonoBehaviour
     private void OnMouseOver()
     {
         if (Input.GetMouseButtonDown(0))
-        {
-            _isSelected = true;
-            transform.parent = _selectedNotesParent.transform;
-            gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 1.0f);
-            _editorController._notes.Add(gameObject);
-        }
+            CreateEditorNote();
 
         if (Input.GetMouseButtonDown(1))
-        {
-            _isSelected = false;
-            transform.parent = _lineGo.transform;
-            gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 0.0f);
-            _editorController._notes.Remove(gameObject);
-        }
+            DeleteEditorNote();
+    }
+
+    public void CreateEditorNote()
+    {
+        _isSelected = true;
+        transform.parent = _selectedNotesParent.transform;
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 1.0f);
+        _editorController._notes.Add(gameObject);
+    }
+
+    public void DeleteEditorNote()
+    {
+        _isSelected = false;
+        transform.parent = _lineGo.transform;
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 0.0f);
+        _editorController._notes.Remove(gameObject);
     }
 
     private void InitializeLaneNumber()
