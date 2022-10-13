@@ -47,7 +47,7 @@ public class PatternPlayController : MonoBehaviour
         {
             ScrollPattern();
             _startTime += Time.deltaTime;
-            if ((_startTime * ((float)_musicPattern._bpm / 240.0f)) >= (1.0f + _musicPattern._songOffset) && _musicPattern._music.isPlaying == false)
+            if ((_startTime * ((float)_musicPattern._bpm / 240.0f)) >= (_musicPattern._songOffset) && _musicPattern._music.isPlaying == false)
                 _musicPattern._music.Play();
         }
     }
