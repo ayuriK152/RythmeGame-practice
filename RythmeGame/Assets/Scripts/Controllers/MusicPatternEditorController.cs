@@ -30,6 +30,7 @@ public class MusicPatternEditorController : MonoBehaviour
 
     private void Start()
     {
+        _musicPattern = new Datas.MusicPattern();
         Init();
         _bar = Resources.Load<GameObject>("Prefabs/EditorBar");
         _note = Resources.Load<GameObject>("Prefabs/Note");
@@ -82,7 +83,6 @@ public class MusicPatternEditorController : MonoBehaviour
 
         BarData tempData = new BarData();
         tempData._scrollSpeed = temp.GetComponent<EditorBar>()._scrollSpeed;
-        tempData._noteDatas = null;
         _barDatas.Add(tempData);
         temp.SetActive(true);
 
@@ -120,7 +120,7 @@ public class MusicPatternEditorController : MonoBehaviour
     {
         for (int i = 0; i < _barDatas.Count; i++)
         {
-            _barDatas[i]._noteDatas = new List<NoteData>();
+            //_barDatas[i]._noteDatas = new List<NoteData>();
             for (int j = 0; j < _notes.Count; j++)
             {
                 EditorNote currentNote = _notes[j].GetComponent<EditorNote>();
@@ -168,11 +168,29 @@ public class MusicPatternEditorController : MonoBehaviour
 
     public void UpdatePatternBPM()
     {
+        int tempBpm = Convert.ToInt32(_bpmInputField.text);
+
+        if (tempBpm <= 0)
+        {
+            Debug.LogWarning("BPM must have positive integer value!");
+            _bpmInputField.text = Convert.ToString(_musicPattern._bpm);
+            return;
+        }
+
         _musicPattern._bpm = Convert.ToInt32(_bpmInputField.text);
     }
 
     public void UpdatePatternOffset()
     {
+        float tempOffset = Convert.ToInt32(_offsetInputField.text);
+
+        if (tempOffset < 0)
+        {
+            Debug.LogWarning("Pattern offset must have positive real number value!");
+            _offsetInputField.text = Convert.ToString(_musicPattern._songOffset);
+            return;
+        }
+
         _musicPattern._songOffset = Convert.ToInt32(_offsetInputField.text);
     }
 

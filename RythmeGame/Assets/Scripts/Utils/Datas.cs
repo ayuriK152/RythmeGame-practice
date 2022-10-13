@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Datas;
 
 public class Datas
 {
@@ -29,6 +30,11 @@ public class Datas
         public int _barIndex;
         public float _scrollSpeed;
         public List<NoteData> _noteDatas;
+
+        public BarData()
+        {
+            _noteDatas = new List<NoteData>();
+        }
     }
 
     [Serializable]
@@ -38,5 +44,12 @@ public class Datas
         public List<BarData> _barDatas;
         public int _bpm;
         public float _songOffset = 0.0f;
+
+        public MusicPattern()
+        {
+            _barDatas = new List<BarData>();
+            _bpm = 120;
+            _songOffset = 0.0f;
+        }
     }
 }
