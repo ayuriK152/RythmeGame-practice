@@ -21,4 +21,11 @@ public class Define
         OneOverEight,
         OneOverSixty,
     }
+
+    public enum EditorStatus
+    {
+        Unknown,
+        Play,
+        Edit,
+    }
 }

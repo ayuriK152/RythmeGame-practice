@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -26,8 +27,11 @@ public class MusicPatternEditorController : MonoBehaviour
 
     private TMP_InputField _bpmInputField;
     private TMP_InputField _offsetInputField;
+    private UI_EditorSlider _editorSlider;
 
     private bool _scrollPattern = false;
+    private bool _isOnLoadPattern = false;
+    public Define.EditorStatus _status;
 
     static public Action EditorBeatUpdateEvent = null;
 
@@ -40,6 +44,8 @@ public class MusicPatternEditorController : MonoBehaviour
         _notes = new List<GameObject>();
         _barDatas = new List<BarData>();
         _bars = new List<GameObject>();
+
+        _status = Define.EditorStatus.Edit;
     }
 
     private void Start()
@@ -55,16 +61,17 @@ public class MusicPatternEditorController : MonoBehaviour
         _bpmInputField.text = Convert.ToString(_musicPattern._bpm);
         _offsetInputField = GameObject.Find("OffsetInputField").GetComponent<TMP_InputField>();
         _offsetInputField.text = Convert.ToString(_musicPattern._songOffset);
+        _editorSlider = GameObject.Find("EditorSlider").GetComponent<UI_EditorSlider>();
     }
 
     private void Update()
     {
-        ScrollPatternWithMouse();
-        //ScrollPattern();
-        PatternLengthValueUpdate();
+        UpdatePatternLengthValue();
+        ScrollPattern();
+        ScrollPatternWithValue();
     }
 
-    static public void ChangeEditorBeat(int index)
+    static public void ChangeEditorBeat(int index)      //노트 입력 박자 변경
     {
         if (index == 0)
             EditorBar._beat = Define.Beat.OneOverOne;
@@ -81,7 +88,7 @@ public class MusicPatternEditorController : MonoBehaviour
             EditorBeatUpdateEvent.Invoke();
     }
 
-    public void AddBar()
+    public void AddBar()        //마디 추가
     {
         GameObject temp = Instantiate(_bar);
         temp.transform.parent = transform;
@@ -91,14 +98,16 @@ public class MusicPatternEditorController : MonoBehaviour
 
         BarData tempData = new BarData();
         tempData._scrollSpeed = temp.GetComponent<EditorBar>()._scrollSpeed;
+        tempData._barIndex = _barIndex;
         _barDatas.Add(tempData);
         temp.SetActive(true);
 
         height += 4;
         _barIndex++;
+        _editorSlider.UpdateSlider();
     }
 
-    public void DeleteBar()
+    public void DeleteBar()     //마디 삭제, LIFO
     {
         if (_barIndex == 0)
             return;
@@ -122,17 +131,21 @@ public class MusicPatternEditorController : MonoBehaviour
 
         height -= 4;
         _barIndex--;
+        _editorSlider.UpdateSlider();
     }
 
     public void SavePatternData()
     {
         for (int i = 0; i < _barDatas.Count; i++)
         {
-            for (int j = 0; j < _notes.Count; j++)
+            foreach (GameObject note in _notes)
             {
-                EditorNote currentNote = _notes[j].GetComponent<EditorNote>();
-                Datas.NoteData tempNoteData = new Datas.NoteData(currentNote._timing, currentNote._laneNumber);
-                _barDatas[i]._noteDatas.Add(tempNoteData);
+                EditorNote currentNote = note.GetComponent<EditorNote>();
+                if (currentNote._editorBar == _bars[i])
+                {
+                    Datas.NoteData tempNoteData = new Datas.NoteData(currentNote._timing, currentNote._laneNumber);
+                    _barDatas[i]._noteDatas.Add(tempNoteData);
+                }
             }
         }
         _musicPattern._barDatas = _barDatas;
@@ -145,10 +158,15 @@ public class MusicPatternEditorController : MonoBehaviour
 
         if (_musicPattern != null)
         {
+            _isOnLoadPattern = true;
+
             int barDeleteCount = _bars.Count;
 
             for (int i = 0; i < barDeleteCount; i++)
                 DeleteBar();
+
+            UpdatePatternBPM();
+            UpdatePatternOffset();
 
             Init();
             for (int i = 0; i < _musicPattern._barDatas.Count; i++)
@@ -170,6 +188,7 @@ public class MusicPatternEditorController : MonoBehaviour
                 }
                 _barDatas[i]._noteDatas = _musicPattern._barDatas[i]._noteDatas;
             }
+            _isOnLoadPattern = false;
         }
 
         else
@@ -180,74 +199,119 @@ public class MusicPatternEditorController : MonoBehaviour
 
     public void UpdatePatternBPM()
     {
-        int tempBpm = Convert.ToInt32(_bpmInputField.text);
-
-        if (tempBpm <= 0)
+        if (!_isOnLoadPattern)
         {
-            Debug.LogWarning("BPM must have positive integer value!");
-            _bpmInputField.text = Convert.ToString(_musicPattern._bpm);
-            return;
+            int tempBpm = Convert.ToInt32(_bpmInputField.text);
+
+            if (tempBpm <= 0)
+            {
+                Debug.LogWarning("BPM must have positive integer value!");
+                _bpmInputField.text = Convert.ToString(_musicPattern._bpm);
+                return;
+            }
+
+            _musicPattern._bpm = Convert.ToInt32(_bpmInputField.text);
         }
 
-        _musicPattern._bpm = Convert.ToInt32(_bpmInputField.text);
+        else
+        {
+            _bpmInputField.text = Convert.ToString(_musicPattern._bpm);
+        }
     }
 
     public void UpdatePatternOffset()
     {
-        float tempOffset = Convert.ToInt32(_offsetInputField.text);
-
-        if (tempOffset < 0)
+        if (!_isOnLoadPattern)
         {
-            Debug.LogWarning("Pattern offset must have positive real number value!");
-            _offsetInputField.text = Convert.ToString(_musicPattern._songOffset);
-            return;
+            float tempOffset = Convert.ToSingle(_offsetInputField.text);
+
+            if (tempOffset < 0)
+            {
+                Debug.LogWarning("Pattern offset must have positive real number value!");
+                _offsetInputField.text = Convert.ToString(_musicPattern._songOffset);
+                return;
+            }
+            _musicPattern._songOffset = Convert.ToSingle(_offsetInputField.text);
         }
-        _musicPattern._songOffset = Convert.ToSingle(_offsetInputField.text);
+
+        else
+        {
+            _offsetInputField.text = Convert.ToString(_musicPattern._songOffset);
+        }
     }
 
-    private void ScrollPatternWithMouse()
+    private void ScrollPatternWithValue()
     {
-        Vector2 wheelInput = -Input.mouseScrollDelta;
-        if (wheelInput.y < 0 && _barIndex > 0 && transform.position.y > (_barIndex + 1) * -4.0f)      //휠을 올릴경우
-            transform.Translate(wheelInput);
-        if (wheelInput.y > 0 && transform.position.y < -4.0f)       // 휠을 내릴경우
-            transform.Translate(wheelInput);
-
-        if (transform.position.y > -4.0f)
-            transform.position = new Vector2(0.0f, -4.0f);
-        if (transform.position.y < (_barIndex + 1) * -4.0f)
-            transform.position = new Vector2(0.0f, -_barIndex * -4.0f);
+        float currentPosition = (float)_barIndex * 4.0f * _patternLengthValue;
+        transform.position = new Vector2(0, -currentPosition - 4.0f);
     }
 
-    private void ScrollPattern()
+    private float editorTiming;
+
+    private void ScrollPattern()        //스페이스바를 이용한 에디터 스크롤, 박자에 맞춰 자동 스크롤.
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (_scrollPattern)
+            {
+                _musicPattern._music.Pause();
                 _scrollPattern = false;
+            }
             else
+            {
+                editorTiming = ((-transform.position.y - 4) / ((float)_musicPattern._bpm / 60)) - (_musicPattern._songOffset / 1000);
+                if (editorTiming < 0.0f)
+                {
+                    _musicPattern._music.time = 0.0f;
+                    StartCoroutine("DelayForSongOffset");
+                }
+                else
+                {
+                    _musicPattern._music.time = editorTiming;
+                    _musicPattern._music.Play();
+                }
                 _scrollPattern = true;
-        }
-
-        if (_scrollPattern && !_musicPattern._music.isPlaying)
-        {
-            _musicPattern._music.Play();
-        }
-
-        else if(!_scrollPattern && _musicPattern._music.isPlaying)
-        {
-            _musicPattern._music.Pause();
+            }
         }
 
         if (_scrollPattern)
         {
-            transform.Translate(Vector2.down * Time.deltaTime * 4.0f * ((float)_musicPattern._bpm / 240.0f));
+            _patternLengthValue += ((float)_musicPattern._bpm / 240) * Time.deltaTime / _barIndex;
+        }
+
+        if (_patternLengthValue == 1.0f)
+        {
+            _musicPattern._music.Pause();
+            _scrollPattern = false;
         }
     }
 
-    private void PatternLengthValueUpdate()
+    private IEnumerator DelayForSongOffset()
     {
-        if (_barIndex != 0)
-            _patternLengthValue = (-transform.position.y - 4) / (_barIndex * 4);
+        yield return new WaitForSeconds(-editorTiming);
+        _musicPattern._music.Play();
+    }
+
+    private void UpdatePatternLengthValue()     //에디터 슬라이더 용, 노래의 길이가 아니라 패턴의 길이.
+    {
+        Vector2 wheelInput = -Input.mouseScrollDelta;
+
+        if (wheelInput.y != 0)
+        {
+            _musicPattern._music.Pause();
+            _scrollPattern = false;
+        }
+
+        if (wheelInput.y < 0 && _barIndex > 0 && _patternLengthValue <= 1.0f)      //휠을 올릴경우
+            _patternLengthValue += (15.0f / (_barIndex + 1)) * Time.deltaTime;
+        if (wheelInput.y > 0 && _patternLengthValue >= 0.0f)       //휠을 내릴경우
+            _patternLengthValue -= (15.0f / (_barIndex + 1)) * Time.deltaTime;
+
+        if (_patternLengthValue > 1.0f)
+            _patternLengthValue = 1.0f;
+        if (_patternLengthValue < 0.0f)
+            _patternLengthValue = 0.0f;
+
+        _editorSlider.UpdateSlider();
     }
 }
