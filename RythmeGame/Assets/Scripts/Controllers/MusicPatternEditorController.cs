@@ -29,7 +29,7 @@ public class MusicPatternEditorController : MonoBehaviour
     private TMP_InputField _offsetInputField;
     private UI_EditorSlider _editorSlider;
 
-    private bool _scrollPattern = false;
+    public bool _scrollPattern = false;
     private bool _isOnLoadPattern = false;
     public Define.EditorStatus _status;
 
@@ -169,6 +169,10 @@ public class MusicPatternEditorController : MonoBehaviour
             UpdatePatternOffset();
 
             Init();
+
+            Define.Beat currentBeat = EditorBar._beat;
+            ChangeEditorBeat(4);
+
             for (int i = 0; i < _musicPattern._barDatas.Count; i++)
             {
                 AddBar();
@@ -188,6 +192,8 @@ public class MusicPatternEditorController : MonoBehaviour
                 }
                 _barDatas[i]._noteDatas = _musicPattern._barDatas[i]._noteDatas;
             }
+
+            ChangeEditorBeat((int)currentBeat);
             _isOnLoadPattern = false;
         }
 
@@ -257,9 +263,11 @@ public class MusicPatternEditorController : MonoBehaviour
                 _musicPattern._music.Pause();
                 _scrollPattern = false;
             }
+
             else
             {
                 editorTiming = ((-transform.position.y - 4) / ((float)_musicPattern._bpm / 60)) - (_musicPattern._songOffset / 1000);
+
                 if (editorTiming < 0.0f)
                 {
                     _musicPattern._music.time = 0.0f;
@@ -270,6 +278,7 @@ public class MusicPatternEditorController : MonoBehaviour
                     _musicPattern._music.time = editorTiming;
                     _musicPattern._music.Play();
                 }
+
                 _scrollPattern = true;
             }
         }
@@ -286,7 +295,7 @@ public class MusicPatternEditorController : MonoBehaviour
         }
     }
 
-    private IEnumerator DelayForSongOffset()
+    private IEnumerator DelayForSongOffset()        // 오프셋 딜레이
     {
         yield return new WaitForSeconds(-editorTiming);
         _musicPattern._music.Play();
