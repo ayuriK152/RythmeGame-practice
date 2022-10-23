@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using static Datas;
 
 public class EditorBar : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class EditorBar : MonoBehaviour
     public int _barIndex;
 
     private TextMeshProUGUI _indexText;
+    private TMP_InputField _scrollSpeedInputField;
 
     [SerializeField]
     static public Define.Beat _beat = Define.Beat.OneOverFour;
@@ -21,8 +24,10 @@ public class EditorBar : MonoBehaviour
     private void Awake()
     {
         _note = Resources.Load<GameObject>("Prefabs/EditorNote");
-        _indexText = gameObject.GetComponentInChildren<TextMeshProUGUI>();
+        _indexText = transform.Find("BarUICanvas").Find("IndexText").GetComponent<TextMeshProUGUI>();
         _indexText.text = Convert.ToString(_barIndex);
+        _scrollSpeedInputField = transform.Find("BarUICanvas").Find("ScrollSpeedInputField").GetComponent<TMP_InputField>();
+        _scrollSpeedInputField.text = Convert.ToString(_scrollSpeed);
         MusicPatternEditorController.EditorBeatUpdateEvent += UpdateBeat;
         UpdateBeat();
     }
@@ -63,6 +68,33 @@ public class EditorBar : MonoBehaviour
             transform.Find("1over4").gameObject.SetActive(true);
             transform.Find("1over8").gameObject.SetActive(true);
             transform.Find("1over16").gameObject.SetActive(true);
+        }
+    }
+
+    public void UpdateScrollSpeed()
+    {
+        float tempBpm = Convert.ToSingle(_scrollSpeedInputField.text);
+
+        if (tempBpm <= 0)
+        {
+            Debug.LogWarning("Scroll Speed must have positive real number value!");
+            _scrollSpeedInputField.text = Convert.ToString(_scrollSpeed);
+            return;
+        }
+
+        _scrollSpeed = Convert.ToSingle(_scrollSpeedInputField.text);
+    }
+
+    public void UpdateScrollSpeed(bool isOnLoadPattern)
+    {
+        if (!isOnLoadPattern)
+        {
+            UpdateScrollSpeed();
+        }
+
+        else
+        {
+            _scrollSpeedInputField.text = Convert.ToString(_scrollSpeed);
         }
     }
 }
