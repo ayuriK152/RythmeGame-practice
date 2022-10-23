@@ -25,17 +25,17 @@ public class PatternPlayController : MonoBehaviour
 
     private void InstantiateBars()
     {
-        float height = 0.0f;
+        float _height = 0.0f;
         for (int i = 0; i < _musicPattern._barDatas.Count; i++)
         {
             GameObject temp = Instantiate(_bar);
             temp.transform.parent = transform;
-            temp.transform.localPosition = new Vector2(0, height);
+            temp.transform.localPosition = new Vector2(0, _height);
             temp.GetComponent<Bar>()._scrollSpeed = _musicPattern._barDatas[i]._scrollSpeed;
             temp.GetComponent<Bar>()._noteDatas = _musicPattern._barDatas[i]._noteDatas;
             temp.SetActive(true);
 
-            height += _musicPattern._barDatas[i]._scrollSpeed;
+            _height += _musicPattern._barDatas[i]._scrollSpeed;
         }
     }
 

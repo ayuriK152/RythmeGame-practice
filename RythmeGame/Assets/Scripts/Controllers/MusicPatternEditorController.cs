@@ -16,7 +16,9 @@ public class MusicPatternEditorController : MonoBehaviour
 
     private GameObject _bar;
     private GameObject _note;
-    private float height = 0.0f;
+    private float _height = 0.0f;
+    private float _editorTiming;
+    public float actualPlayTime;
     public int _barIndex = 0;
     public float _patternLengthValue;
 
@@ -37,7 +39,7 @@ public class MusicPatternEditorController : MonoBehaviour
 
     private void Init()
     {
-        height = 0.0f;
+        _height = 0.0f;
         _barIndex = 0;
 
         _noteDatas = new List<NoteData>();
@@ -92,7 +94,7 @@ public class MusicPatternEditorController : MonoBehaviour
     {
         GameObject temp = Instantiate(_bar);
         temp.transform.parent = transform;
-        temp.transform.localPosition = new Vector2(0, height);
+        temp.transform.localPosition = new Vector2(0, _height);
         temp.GetComponent<EditorBar>()._barIndex = _barIndex;
         _bars.Add(temp);
 
@@ -102,7 +104,7 @@ public class MusicPatternEditorController : MonoBehaviour
         _barDatas.Add(tempData);
         temp.SetActive(true);
 
-        height += 4;
+        _height += 4;
         _barIndex++;
         _editorSlider.UpdateSlider();
     }
@@ -129,7 +131,7 @@ public class MusicPatternEditorController : MonoBehaviour
         _bars.Remove(delBar);
         _barDatas.Remove(_barDatas[_barIndex - 1]);
 
-        height -= 4;
+        _height -= 4;
         _barIndex--;
         _editorSlider.UpdateSlider();
     }
@@ -252,35 +254,46 @@ public class MusicPatternEditorController : MonoBehaviour
         transform.position = new Vector2(0, -currentPosition - 4.0f);
     }
 
-    private float editorTiming;
+    public void PlayPatternOnEditor()
+    {
+        _editorTiming = ((-transform.position.y - 4) / ((float)_musicPattern._bpm / 60)) - (_musicPattern._songOffset / 1000);
+
+        if (_editorTiming < 0.0f)
+        {
+            _musicPattern._music.time = 0.0f;
+            StartCoroutine("DelayForSongOffset");
+        }
+        else
+        {
+            _musicPattern._music.time = _editorTiming;
+            _musicPattern._music.Play();
+        }
+
+        _scrollPattern = true;
+    }
+
+    public void PausePatternOnEditor()
+    {
+        _musicPattern._music.Pause();
+        _scrollPattern = false;
+    }
+
+    public void StopPatternOnEditor()
+    {
+        PausePatternOnEditor();
+        _patternLengthValue = 0;
+    }
 
     private void ScrollPattern()        //스페이스바를 이용한 에디터 스크롤, 박자에 맞춰 자동 스크롤.
     {
+        actualPlayTime = (-transform.position.y - 4) / ((float)_musicPattern._bpm / 60);
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (_scrollPattern)
-            {
-                _musicPattern._music.Pause();
-                _scrollPattern = false;
-            }
+                PausePatternOnEditor();
 
             else
-            {
-                editorTiming = ((-transform.position.y - 4) / ((float)_musicPattern._bpm / 60)) - (_musicPattern._songOffset / 1000);
-
-                if (editorTiming < 0.0f)
-                {
-                    _musicPattern._music.time = 0.0f;
-                    StartCoroutine("DelayForSongOffset");
-                }
-                else
-                {
-                    _musicPattern._music.time = editorTiming;
-                    _musicPattern._music.Play();
-                }
-
-                _scrollPattern = true;
-            }
+                PlayPatternOnEditor();
         }
 
         if (_scrollPattern)
@@ -297,7 +310,7 @@ public class MusicPatternEditorController : MonoBehaviour
 
     private IEnumerator DelayForSongOffset()        // 오프셋 딜레이
     {
-        yield return new WaitForSeconds(-editorTiming);
+        yield return new WaitForSeconds(-_editorTiming);
         _musicPattern._music.Play();
     }
 
