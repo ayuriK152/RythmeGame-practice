@@ -13,6 +13,7 @@ public class EditorNote : MonoBehaviour
     GameObject _selectedNotesParent;
     public GameObject _editorBar;
     MusicPatternEditorController _editorController;
+    AudioSource _hitSound;
 
     private void Awake()
     {
@@ -20,6 +21,8 @@ public class EditorNote : MonoBehaviour
         _editorBar = transform.parent.parent.parent.gameObject;
         _selectedNotesParent = _editorBar.transform.Find("SelectedNotes").gameObject;
         _editorController = GameObject.Find("PatternEditor").GetComponent<MusicPatternEditorController>();
+        _hitSound = transform.GetComponent<AudioSource>();
+        _hitSound.enabled = false;
         InitializeLaneNumber();
         InitializeTiming();
     }
@@ -53,6 +56,8 @@ public class EditorNote : MonoBehaviour
         transform.parent = _selectedNotesParent.transform;
         gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 1.0f);
         _editorController._notes.Add(gameObject);
+        _hitSound.enabled = true;
+        transform.GetComponent<Collider2D>().enabled = true;
     }
 
     public void DeleteEditorNote()
@@ -61,6 +66,8 @@ public class EditorNote : MonoBehaviour
         transform.parent = _lineGo.transform;
         gameObject.GetComponent<SpriteRenderer>().color = new Color(255.0f, 255.0f, 255.0f, 0.0f);
         _editorController._notes.Remove(gameObject);
+        _hitSound.enabled = false;
+        transform.GetComponent<Collider2D>().enabled = false;
     }
 
     private void InitializeLaneNumber()
@@ -142,5 +149,11 @@ public class EditorNote : MonoBehaviour
                     _timing = 15;
             }
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (_isSelected && _editorController._scrollPattern)
+            _hitSound.PlayOneShot(_hitSound.clip);
     }
 }

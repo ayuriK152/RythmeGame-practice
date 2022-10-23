@@ -48,6 +48,10 @@ public class MusicPatternEditorController : MonoBehaviour
         _bars = new List<GameObject>();
 
         _status = Define.EditorStatus.Edit;
+
+        _musicPattern._music = transform.GetComponent<AudioSource>();
+        _musicPattern._music.clip = Resources.Load("Musics/Grievous_Lady") as AudioClip;
+        _musicPattern._music.volume = 0.2f;
     }
 
     private void Start()
@@ -56,7 +60,7 @@ public class MusicPatternEditorController : MonoBehaviour
         Init();
         _musicPattern._music = transform.GetComponent<AudioSource>();
         _musicPattern._music.clip = Resources.Load("Musics/Grievous_Lady") as AudioClip;
-        _musicPattern._music.volume = 0.1f;
+        _musicPattern._music.volume = 0.2f;
         _bar = Resources.Load<GameObject>("Prefabs/EditorBar");
         _note = Resources.Load<GameObject>("Prefabs/Note");
         _bpmInputField = GameObject.Find("BPMInputField").GetComponent<TMP_InputField>();
