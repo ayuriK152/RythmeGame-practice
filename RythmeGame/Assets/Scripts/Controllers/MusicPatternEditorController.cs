@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,7 @@ public class MusicPatternEditorController : MonoBehaviour
     public float actualPlayTime;
     public int _barIndex = 0;
     public float _patternLengthValue;
+    public float noteTermValue;
 
     public List<Datas.NoteData> _noteDatas;
     public List<GameObject> _notes;
@@ -36,6 +38,8 @@ public class MusicPatternEditorController : MonoBehaviour
     public Define.EditorStatus _status;
 
     static public Action EditorBeatUpdateEvent = null;
+    static public Action EditorBPMUpdateEvent = null;
+    static public Action ScrollStopEvent = null;
 
     private void Init()
     {
@@ -65,6 +69,7 @@ public class MusicPatternEditorController : MonoBehaviour
         _note = Resources.Load<GameObject>("Prefabs/Note");
         _bpmInputField = GameObject.Find("BPMInputField").GetComponent<TMP_InputField>();
         _bpmInputField.text = Convert.ToString(_musicPattern._bpm);
+        noteTermValue = 1.0f / ((float)_musicPattern._bpm / 15);
         _offsetInputField = GameObject.Find("OffsetInputField").GetComponent<TMP_InputField>();
         _offsetInputField.text = Convert.ToString(_musicPattern._songOffset);
         _editorSlider = GameObject.Find("EditorSlider").GetComponent<UI_EditorSlider>();
@@ -149,7 +154,7 @@ public class MusicPatternEditorController : MonoBehaviour
                 EditorNote currentNote = note.GetComponent<EditorNote>();
                 if (currentNote._editorBar == _bars[i])
                 {
-                    Datas.NoteData tempNoteData = new Datas.NoteData(currentNote._timing, currentNote._laneNumber);
+                    Datas.NoteData tempNoteData = new Datas.NoteData(currentNote._timing, currentNote._laneNumber, currentNote.judgeTiming);
                     _barDatas[i]._noteDatas.Add(tempNoteData);
                 }
             }
@@ -171,9 +176,6 @@ public class MusicPatternEditorController : MonoBehaviour
             for (int i = 0; i < barDeleteCount; i++)
                 DeleteBar();
 
-            UpdatePatternBPM();
-            UpdatePatternOffset();
-
             Init();
 
             Define.Beat currentBeat = EditorBar._beat;
@@ -189,6 +191,7 @@ public class MusicPatternEditorController : MonoBehaviour
                 {
                     foreach (EditorNote childNote in childNotes)
                     {
+                        childNote.GetComponent<EditorNote>().UpdateByBPM();
                         if (childNote.GetComponent<EditorNote>()._timing == _musicPattern._barDatas[i]._noteDatas[j]._timing
                             && childNote.GetComponent<EditorNote>()._laneNumber == _musicPattern._barDatas[i]._noteDatas[j]._laneNumber)
                         {
@@ -198,6 +201,9 @@ public class MusicPatternEditorController : MonoBehaviour
                 }
                 _barDatas[i]._noteDatas = _musicPattern._barDatas[i]._noteDatas;
             }
+
+            UpdatePatternBPM();
+            UpdatePatternOffset();
 
             ChangeEditorBeat((int)currentBeat);
             _isOnLoadPattern = false;
@@ -229,6 +235,10 @@ public class MusicPatternEditorController : MonoBehaviour
         {
             _bpmInputField.text = Convert.ToString(_musicPattern._bpm);
         }
+
+        noteTermValue = 1.0f / ((float)_musicPattern._bpm / 15);
+        if (EditorBPMUpdateEvent != null)
+            EditorBPMUpdateEvent.Invoke();
     }
 
     public void UpdatePatternOffset()
@@ -274,18 +284,21 @@ public class MusicPatternEditorController : MonoBehaviour
         }
 
         _scrollPattern = true;
+        ScrollStopEvent.Invoke();
     }
 
     public void PausePatternOnEditor()
     {
         _musicPattern._music.Pause();
         _scrollPattern = false;
+        ScrollStopEvent.Invoke();
     }
 
     public void StopPatternOnEditor()
     {
         PausePatternOnEditor();
         _patternLengthValue = 0;
+        ScrollStopEvent.Invoke();
     }
 
     private void ScrollPattern()        //스페이스바를 이용한 에디터 스크롤, 박자에 맞춰 자동 스크롤.

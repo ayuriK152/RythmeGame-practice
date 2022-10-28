@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class EditorNote : MonoBehaviour
 {
+    public float judgeTiming;
     public float _timing;
     public Define.LaneNumber _laneNumber;
     public bool _isSelected = false;
+    private bool _isTriggered = false;
 
     GameObject _lineGo;
     GameObject _selectedNotesParent;
@@ -21,6 +24,8 @@ public class EditorNote : MonoBehaviour
         _editorBar = transform.parent.parent.parent.gameObject;
         _selectedNotesParent = _editorBar.transform.Find("SelectedNotes").gameObject;
         _editorController = GameObject.Find("PatternEditor").GetComponent<MusicPatternEditorController>();
+        MusicPatternEditorController.EditorBPMUpdateEvent += UpdateByBPM;
+        MusicPatternEditorController.ScrollStopEvent += UpdateTriggeredBoolValue;
         _hitSound = transform.GetComponent<AudioSource>();
         _hitSound.enabled = false;
         InitializeLaneNumber();
@@ -149,11 +154,33 @@ public class EditorNote : MonoBehaviour
                     _timing = 15;
             }
         }
+
+        judgeTiming = _editorController.noteTermValue * _timing + _editorBar.GetComponent<EditorBar>()._barIndex * _editorController.noteTermValue * 16.0f;
+    }
+    
+    public void UpdateByBPM()
+    {
+        judgeTiming = _editorController.noteTermValue * _timing + _editorBar.GetComponent<EditorBar>()._barIndex * _editorController.noteTermValue * 16.0f;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void UpdateTriggeredBoolValue()
     {
-        if (_isSelected && _editorController._scrollPattern)
-            _hitSound.PlayOneShot(_hitSound.clip);
+        if (judgeTiming - _editorController.actualPlayTime <= 0.002f)
+            _isTriggered = true;
+        else
+            _isTriggered = false;
+    }
+
+    private void Update()
+    {
+        if (_isSelected && _editorController._scrollPattern && !_isTriggered)
+        {
+            if (judgeTiming - _editorController.actualPlayTime <= 0.002f)
+            {
+                _hitSound.PlayOneShot(_hitSound.clip);
+                Debug.Log(judgeTiming);
+                _isTriggered = true;
+            }
+        }
     }
 }

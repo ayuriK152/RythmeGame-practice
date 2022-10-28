@@ -9,18 +9,17 @@ public class Datas
     [Serializable]
     public class NoteData
     {
+        public float _judgeTiming;
         public float _timing;
         public Define.LaneNumber _laneNumber;
 
-        public NoteData()
-        {
+        public NoteData() { }
 
-        }
-
-        public NoteData(float timing, Define.LaneNumber laneNumber)
+        public NoteData(float timing, Define.LaneNumber laneNumber, float judgeTiming)
         {
             _timing = timing;
             _laneNumber = laneNumber;
+            _judgeTiming = judgeTiming;
         }
     }
 
